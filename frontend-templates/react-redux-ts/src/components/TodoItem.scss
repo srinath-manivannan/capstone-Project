@@ -1,0 +1,40 @@
+// 📄 Styles for TodoItem — one component, one .scss file, BEM-ish names.
+@use '../styles/variables' as *;
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: $surface;
+
+  &--done .todo-item__title {
+    text-decoration: line-through;
+    opacity: 0.55;
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  &__delete {
+    border: none;
+    background: none;
+    color: $danger;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+
+    &:hover {
+      background: rgba(220, 38, 38, 0.1);
+    }
+  }
+}

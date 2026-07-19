@@ -1,0 +1,107 @@
+// 📄 Styles for TodoApp — a CSS MODULE: class names are scoped to this
+//    component automatically (styles.item can never clash with another file).
+//    This is Next.js's idiomatic "one component = one stylesheet".
+
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 40px 16px;
+}
+
+.header {
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+  }
+  p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+}
+
+.form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+
+    &:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+  }
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--primary-dark);
+    }
+  }
+}
+
+.error {
+  color: var(--danger);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.itemDone .itemTitle {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.itemLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.itemDelete {
+  border: none;
+  background: none;
+  color: var(--danger);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.1);
+  }
+}

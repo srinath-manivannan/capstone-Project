@@ -11,6 +11,10 @@ example CRUD resource ("Items")** you copy to build your own features.
 > 📗 **Learning the frontend?** Start with **[FRONTEND-GUIDE.md](FRONTEND-GUIDE.md)** —
 > the Redux data-flow (UI ➜ thunk ➜ API ➜ slice ➜ selector), the golden rules,
 > SCSS conventions, performance playbook and recipes.
+> 🧰 **Starting a new project?** Pick a starter from
+> **[frontend-templates/](frontend-templates/)** — `react-ts` (no Redux),
+> `react-redux-ts`, or `nextjs-ts` — all runnable instantly; this repo's
+> `frontend/` is the full-scale Redux app (auth + MUI + guards).
 > Every source file carries the same WHAT/WHY/FLOW header.
 
 ---
@@ -111,12 +115,12 @@ you're in.
 ## How authentication works
 
 1. Register/login hits the backend, which returns a **JWT token**.
-2. The frontend saves it in `localStorage` (`authService` → `LoginForm`).
-3. `api.ts` auto-attaches it as `Authorization: Bearer <token>` on every request.
+2. The `authSlice` stores it in Redux (mirrored to `localStorage` for refresh).
+3. `api/client.ts` auto-attaches it as `Authorization: Bearer <token>` on every request.
 4. `RequireAuth` (in `AppRoutes.tsx`) keeps you on `/login` until a token exists.
 5. On the backend, `protect` verifies the token and sets `req.userId` so a user
    only ever sees their own data. If the token is bad, the API returns 401 and
-   the frontend auto-logs-out (response interceptor in `api.ts`).
+   the frontend auto-logs-out (response interceptor in `api/client.ts`).
 
 ## How a request flows (backend)
 

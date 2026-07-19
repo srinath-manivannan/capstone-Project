@@ -69,8 +69,8 @@ the storekeeper to do.
 ### What ACTUALLY happens when a GET runs (step by step)
 
 ```
-1. Frontend:  itemService.getItems()  →  axios sends:  GET /api/items
-              (api.ts automatically adds:  Authorization: Bearer <token>)
+1. Frontend:  dispatch(fetchItems())  →  axios sends:  GET /api/items
+              (api/client.ts automatically adds:  Authorization: Bearer <token>)
 2. Express receives it, walks through app.ts top-to-bottom: CORS → JSON parser
 3. URL matches app.use('/api/items') → enters routes/item.routes.ts
 4. protect middleware verifies the JWT → sets req.userId
@@ -78,7 +78,7 @@ the storekeeper to do.
 6. Controller calls itemService.getItems(req.userId)
 7. Service asks the model:  Item.find({ owner })  → MongoDB returns documents
 8. Controller sends:  200  { success: true, data: [ ...items ] }
-9. Frontend axios resolves → React setState → the list appears on screen
+9. Frontend: the thunk resolves → Redux slice stores the list → UI re-renders
 ```
 
 Every other verb is the SAME journey with two differences: POST/PUT/PATCH carry
@@ -114,8 +114,8 @@ Every request through this backend takes this exact path. Learn it ONCE:
 
 ```mermaid
 flowchart TD
-    A["🖥️ FRONTEND<br/>React component calls itemService.getItems()<br/><i>frontend/src/services/itemService.ts</i>"]
-    B["📮 axios instance<br/>adds baseURL + Authorization: Bearer token<br/><i>frontend/src/services/api.ts</i>"]
+    A["🖥️ FRONTEND<br/>component dispatches fetchItems()<br/><i>frontend/src/features/items/itemsThunks.ts</i>"]
+    B["📮 axios instance<br/>adds baseURL + Authorization: Bearer token<br/><i>frontend/src/api/client.ts</i>"]
     C["🚪 EXPRESS SERVER<br/>started by src/server.ts (after DB connected)"]
     D["🌍 Global middleware (in order!)<br/>1️⃣ CORS — is this frontend allowed?<br/>2️⃣ express.json() — parse body into req.body<br/><i>src/app.ts</i>"]
     E["🧭 ROUTER<br/>URL matches /api/items → item.routes.ts<br/><i>src/routes/item.routes.ts</i>"]
@@ -373,6 +373,7 @@ router.post('/', validateRequest(createThingSchema), asyncHandler(thingControlle
 
 ---
 
-*Companion file: [README.md](README.md) for setup. Frontend patterns (services,
-props drilling, protected routes) live in `frontend/src` — start at
-`pages/Items/ItemsPage.tsx`, which mirrors this backend's Items module.*
+*Companion file: [README.md](README.md) for setup. Frontend patterns (Redux
+thunks/slices, selectors, protected routes) are in [FRONTEND-GUIDE.md](FRONTEND-GUIDE.md) —
+start at `frontend/src/pages/Items/ItemsPage.tsx`, which mirrors
+this backend's Items module.*
