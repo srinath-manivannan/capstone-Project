@@ -1,18 +1,20 @@
-import { Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
+import PageHeader from '../../components/PageHeader';
 
-// Example page. Notice it does NOT include AppBar/Sidebar/Paper —
-// MainLayout already wraps every page with those automatically.
 export default function Dashboard() {
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        Dashboard
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        This content sits inside the shared Paper. Try resizing your browser
-        window (or opening dev tools mobile view) to see the Sidebar switch
-        to an overlay below 600px width.
-      </Typography>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Welcome back — here’s an overview of your workspace."
+      />
+      <Card elevation={0}>
+        <CardContent sx={{ p: 3 }}>
+          <Typography variant="body1" color="text.secondary">
+            Replace this with your dashboard content.
+          </Typography>
+        </CardContent>
+      </Card>
     </>
   );
 }

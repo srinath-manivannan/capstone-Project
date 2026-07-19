@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Box, Paper, useMediaQuery, useTheme } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import AppBar from './AppBar';
 import Sidebar from './Sidebar';
@@ -26,12 +26,6 @@ export default function MainLayout() {
 
   const handleCloseMobile = useCallback(() => setMobileOpen(false), []);
 
-  const sidebarWidth = isMobile
-    ? '0px'
-    : open
-    ? 'var(--sidebar-width-expanded)'
-    : 'var(--sidebar-width-collapsed)';
-
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <AppBar onToggleSidebar={handleToggleSidebar} />
@@ -47,29 +41,20 @@ export default function MainLayout() {
         component="main"
         sx={{
           flexGrow: 1,
+          minWidth: 0, // lets content shrink instead of forcing horizontal overflow
           mt: 'var(--appbar-height)',
-          ml: sidebarWidth, // content shifts right by exactly the sidebar's current width
-          transition: (t) =>
-            t.transitions.create('margin-left', {
-              easing: t.transitions.easing.sharp,
-              duration: t.transitions.duration.enteringScreen,
-            }),
+          // NOTE: no margin-left here. The permanent Sidebar already reserves its
+          // width in the flex row, so the content sits right beside it. Adding a
+          // margin here as well was double-offsetting everything to one side.
           p: { xs: 2, sm: 3 }, // less padding on phones, more on desktop
         }}
       >
-        {/* Every page's content lives inside this Paper — gives it a
-            consistent card background + shadow, and keeps spacing
-            identical no matter which page you're on. */}
-        <Paper
-          elevation={1}
-          sx={{
-            p: { xs: 2, sm: 3 },
-            borderRadius: 2,
-            minHeight: 'calc(100vh - var(--appbar-height) - 48px)',
-          }}
-        >
+        {/* A plain, centered content region (max-width for readable line
+            lengths on wide monitors). Each PAGE brings its own cards, so a
+            dashboard can show many cards instead of being trapped in one. */}
+        <Box sx={{ maxWidth: 1320, mx: 'auto', width: '100%' }}>
           <Outlet />
-        </Paper>
+        </Box>
       </Box>
     </Box>
   );
