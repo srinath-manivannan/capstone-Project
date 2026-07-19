@@ -1,0 +1,54 @@
+/*
+  Global responsive rules.
+  We store the sidebar/appbar sizes as CSS variables so every
+  component (AppBar, Sidebar, MainLayout) can read the same values
+  with var(--name), and we only need to change the number in ONE place
+  per screen size.
+*/
+
+:root {
+  --appbar-height: 64px;
+  --sidebar-width-expanded: 240px;
+  --sidebar-width-collapsed: 72px;
+}
+
+/* MOBILE (phones, < 600px) — sidebar becomes an overlay, so it takes 0 space */
+@media (max-width: 599px) {
+  :root {
+    --appbar-height: 56px;
+    --sidebar-width-expanded: 240px;
+    --sidebar-width-collapsed: 0px;
+  }
+}
+
+/* TABLET (600px - 899px) — slightly narrower sidebar */
+@media (min-width: 600px) and (max-width: 899px) {
+  :root {
+    --appbar-height: 64px;
+    --sidebar-width-expanded: 220px;
+    --sidebar-width-collapsed: 64px;
+  }
+}
+
+/* DESKTOP (900px and above) */
+@media (min-width: 900px) {
+  :root {
+    --appbar-height: 64px;
+    --sidebar-width-expanded: 240px;
+    --sidebar-width-collapsed: 72px;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Using rem for spacing (which MUI does by default) means the whole
+   layout scales correctly with browser/OS zoom - this is what keeps
+   it looking right on a 14" laptop at 110% zoom vs a 15" laptop at 100%. */
+* {
+  box-sizing: border-box;
+}
