@@ -6,9 +6,12 @@ includes: JWT authentication (register / login / logout), a themeable MUI layout
 example CRUD resource ("Items")** you copy to build your own features.
 
 > 📘 **Learning the backend?** Start with **[BACKEND-GUIDE.md](BACKEND-GUIDE.md)** —
-> it explains every HTTP verb, the full request flowchart, SRP/DRY/KISS,
-> security (hashing, JWT, env vars), recipe cards for adding new APIs, and an
-> interview Q&A bank. Every backend file also carries a WHAT/WHY/FLOW header.
+> HTTP verbs, the full request flowchart, SRP/DRY/KISS, security, recipe cards
+> and an interview Q&A bank.
+> 📗 **Learning the frontend?** Start with **[FRONTEND-GUIDE.md](FRONTEND-GUIDE.md)** —
+> the Redux data-flow (UI ➜ thunk ➜ API ➜ slice ➜ selector), the golden rules,
+> SCSS conventions, performance playbook and recipes.
+> Every source file carries the same WHAT/WHY/FLOW header.
 
 ---
 
@@ -16,7 +19,7 @@ example CRUD resource ("Items")** you copy to build your own features.
 
 | Layer     | Tech |
 |-----------|------|
-| Frontend  | React + TypeScript, Vite, MUI, React Router, Formik + Yup, Axios |
+| Frontend  | React + TypeScript, Vite, Redux Toolkit, MUI, SCSS, React Router, Formik + Yup, Axios |
 | Backend   | Node + Express (TypeScript), Mongoose (MongoDB), JWT, bcrypt, Yup |
 | Database  | MongoDB (Atlas or local) |
 
@@ -47,14 +50,20 @@ backend/
     └── utils/             # AppError, asyncHandler, generateToken
 
 frontend/src/
-├── main.tsx              # entry: ColorModeProvider + App
+├── main.tsx              # entry: Redux <Provider> + ColorModeProvider + App
 ├── App.tsx               # Router
-├── routes/AppRoutes.tsx  # public /login + protected pages (RequireAuth guard)
+├── config/env.ts         # reads VITE_* env vars (API base URL)
+├── api/                  # endpoints.ts (all paths) + client.ts (one axios instance)
+├── app/                  # store.ts + typed hooks (useAppDispatch/useAppSelector)
+├── features/             # ⭐ Redux: one folder per feature (types/thunks/slice/selectors)
+│   ├── auth/
+│   └── items/
+├── routes/AppRoutes.tsx  # navigation only: lazy pages + RequireAuth guard
 ├── theme/                # MUI theme + light/dark color-mode context
 ├── layouts/MainLayout/   # AppBar + Sidebar + content area (navItems.ts = menu)
 ├── components/           # shared UI (PageHeader)
-├── services/             # api.ts (axios instance) + one service per resource
-└── pages/                # one folder per screen
+├── styles/               # _variables.scss + main.scss (global styles only)
+└── pages/                # one folder per screen; each component + its own .scss
     ├── Auth/             # login / register / forgot-password
     └── Items/            # ⭐ the example CRUD page (copy this)
 ```
@@ -139,10 +148,12 @@ rename. That's it — same 6 backend files + 1 frontend service + 1 page.
 6. `routes/product.routes.ts` — the 5 CRUD routes.
 7. In `app.ts`, add one line: `app.use('/api/products', productRoutes);`
 
-**Frontend**:
-1. `services/productService.ts` — copy `itemService.ts`, rename endpoints.
-2. `pages/Products/…` — copy the `Items` page/components.
-3. Add a `<Route>` in `routes/AppRoutes.tsx` and an entry in
+**Frontend** (full steps in [FRONTEND-GUIDE.md](FRONTEND-GUIDE.md)):
+1. Add the paths in `api/endpoints.ts`.
+2. `features/products/` — copy the `features/items/` folder (types/thunks/slice/selectors), rename.
+3. Register the reducer in `app/store.ts` (1 line).
+4. `pages/Products/…` — copy the `Items` page/components (+ their `.scss` files).
+5. Add a `<Route>` in `routes/AppRoutes.tsx` and an entry in
    `layouts/MainLayout/navItems.ts`.
 
 ### The Items API (reference)

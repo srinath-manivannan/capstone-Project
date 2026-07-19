@@ -1,0 +1,20 @@
+// ============================================
+// 📄 WHAT : Styles for AuthHeader — the title block above each auth form.
+// ============================================
+@use '../../../styles/variables' as *;
+
+.auth-header {
+  margin-bottom: 24px;
+
+  &__title {
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  &__subtitle {
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 6px;
+  }
+}

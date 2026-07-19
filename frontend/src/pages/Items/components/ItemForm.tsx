@@ -1,84 +1,85 @@
-import { useState } from 'react';
-import { Card, CardContent, Stack, TextField, Button, Typography } from '@mui/material';
-import type { ItemInput } from '../../../services/itemService';
+/**
+ * ============================================
+ * 📄 WHAT : The "add item" form — the CREATE (POST) part of the page.
+ * 🎯 WHY  : Dispatches its own thunk instead of receiving callbacks via
+ *           props (no props drilling). Draft input values are UI state,
+ *           so they're allowed to be local; the moment data matters to the
+ *           app (the created item), it lives in Redux.
+ * 🔁 FLOW : submit ➜ dispatch(createItem) ➜ thunk ➜ backend
+ *           ➜ itemsSlice unshifts the new item ➜ ItemList re-renders
+ * ============================================
+ *
+ * memo(): this component reads only `mutating` from Redux, so it re-renders
+ * only when that flag changes — not when the items list changes.
+ */
+import { memo, useState, useCallback } from 'react';
+import { Card, CardContent, TextField, Button, Typography } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { createItem } from '../../../features/items/itemsThunks';
+import { selectItemsMutating } from '../../../features/items/itemsSelectors';
+import './ItemForm.scss';
 
-// This child receives ONE prop from the parent: a function to call when the
-// user submits. It doesn't know or care what the parent does with the data —
-// that separation is what keeps components reusable.
-interface Props {
-  onCreate: (input: ItemInput) => Promise<void>;
-}
+function ItemForm() {
+  const dispatch = useAppDispatch();
+  const saving = useAppSelector(selectItemsMutating);
 
-export default function ItemForm({ onCreate }: Props) {
+  // Draft values = pure UI state → local is correct here.
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [description, setDescription] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSaving(true);
-    try {
-      await onCreate({ name, description, quantity: Number(quantity) });
-      // Clear the form after a successful create.
-      setName('');
-      setQuantity('');
-      setDescription('');
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Could not create item.');
-    } finally {
-      setSaving(false);
-    }
-  };
+  // useCallback: stable handler, no re-creation on every keystroke render.
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      const result = await dispatch(createItem({ name, description, quantity: Number(quantity) }));
+      // Clear the draft only if the create actually succeeded.
+      if (createItem.fulfilled.match(result)) {
+        setName('');
+        setQuantity('');
+        setDescription('');
+      }
+    },
+    [dispatch, name, description, quantity]
+  );
 
   return (
-    <Card elevation={0} sx={{ mb: 2.5 }}>
+    <Card elevation={0} className="item-form">
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+        <Typography variant="h6" className="item-form__title">
           Add a new item
         </Typography>
 
-        <Stack
-          component="form"
-          onSubmit={handleSubmit}
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          sx={{ alignItems: { sm: 'flex-start' } }}
-        >
+        <form className="item-form__row" onSubmit={handleSubmit}>
           <TextField
+            className="item-form__name"
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            sx={{ flex: 2 }}
           />
           <TextField
+            className="item-form__qty"
             label="Quantity"
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             required
-            sx={{ flex: 1 }}
           />
           <TextField
+            className="item-form__desc"
             label="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            sx={{ flex: 3 }}
           />
           <Button type="submit" variant="contained" disabled={saving} sx={{ py: 1.75, px: 3 }}>
             {saving ? 'Adding…' : 'Add'}
           </Button>
-        </Stack>
-
-        {error && (
-          <Typography variant="body2" color="error" sx={{ mt: 1.5 }}>
-            {error}
-          </Typography>
-        )}
+        </form>
       </CardContent>
     </Card>
   );
 }
+
+// React.memo — skip re-rendering when parent re-renders with same props.
+export default memo(ItemForm);

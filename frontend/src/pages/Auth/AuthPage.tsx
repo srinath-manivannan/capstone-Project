@@ -1,88 +1,63 @@
-import { useState } from 'react';
+/**
+ * ============================================
+ * 📄 WHAT : The full-screen login screen (no AppBar/Sidebar here).
+ * 🎯 WHY  : `view` decides which of the 3 forms shows inside the glass card.
+ *           Switching views is pure LOCAL state (allowed: it's UI-only state,
+ *           not server data) — no route change, no reload.
+ * 🔁 FLOW : routes/AppRoutes.tsx (/login) ➜ THIS FILE ➜ Login/Register/Forgot forms
+ * ============================================
+ */
+import { useState, useCallback } from 'react';
 import { Box, Fade } from '@mui/material';
+import { useAppDispatch } from '../../app/hooks';
+import { clearAuthError } from '../../features/auth/authSlice';
 import BrandPanel from './components/BrandPannel';
 import GlassPanel from './components/GlassPanel';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ForgotPasswordForm from './components/ForgetPasswordForm';
+import './AuthPage.scss';
 
 type AuthView = 'login' | 'register' | 'forgot';
 
-/**
- * The whole login screen. It does NOT use MainLayout (no AppBar/Sidebar) —
- * it's a full-screen split layout: brand story on the left, glass form card
- * on the right. `view` decides which of the 3 forms shows inside the card;
- * switching views is pure state (no route change, no reload).
- */
 export default function AuthPage() {
   const [view, setView] = useState<AuthView>('login');
+  const dispatch = useAppDispatch();
+
+  // Changing forms also clears any old error/success message from Redux,
+  // so the Register form never shows a stale Login error.
+  const changeView = useCallback(
+    (next: AuthView) => {
+      dispatch(clearAuthError());
+      setView(next);
+    },
+    [dispatch]
+  );
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        minHeight: '100vh',
-        width: '100%',
-        display: 'flex',
-        overflow: 'hidden',
-        background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #db2777 100%)',
-      }}
-    >
-      {/* Soft decorative glows for depth behind the glass */}
-      <Box
-        aria-hidden
-        sx={{
-          position: 'absolute',
-          top: '-15%',
-          left: '-10%',
-          width: 520,
-          height: 520,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <Box
-        aria-hidden
-        sx={{
-          position: 'absolute',
-          bottom: '-20%',
-          right: '18%',
-          width: 460,
-          height: 460,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(219,39,119,0.35), transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
+    <Box className="auth-page">
+      <span className="auth-page__glow auth-page__glow--top" aria-hidden />
+      <span className="auth-page__glow auth-page__glow--bottom" aria-hidden />
 
-      {/* Left: brand story — hidden on small screens */}
+      {/* Left: brand story — hidden on small screens (see BrandPanel.scss) */}
       <BrandPanel />
 
-      {/* Right: the glass form card, always visible and centered */}
-      <Box
-        sx={{
-          position: 'relative',
-          zIndex: 1,
-          flex: { xs: 1, md: '0 0 520px' },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: { xs: 2, sm: 4 },
-        }}
-      >
-        <GlassPanel sx={{ width: '100%', maxWidth: 420, p: { xs: 3, sm: 4.5 } }}>
-          {/* key={view} replays the Fade every time the form switches */}
+      {/* Right: the glass form card */}
+      <Box className="auth-page__card-col">
+        <GlassPanel>
+          {/* key={view} replays the fade each time the form switches */}
           <Fade in key={view} timeout={350}>
             <Box>
               {view === 'login' && (
                 <LoginForm
-                  onForgotPassword={() => setView('forgot')}
-                  onRegister={() => setView('register')}
+                  onForgotPassword={() => changeView('forgot')}
+                  onRegister={() => changeView('register')}
                 />
               )}
-              {view === 'register' && <RegisterForm onLogin={() => setView('login')} />}
-              {view === 'forgot' && <ForgotPasswordForm onBackToLogin={() => setView('login')} />}
+              {view === 'register' && <RegisterForm onLogin={() => changeView('login')} />}
+              {view === 'forgot' && (
+                <ForgotPasswordForm onBackToLogin={() => changeView('login')} />
+              )}
             </Box>
           </Fade>
         </GlassPanel>

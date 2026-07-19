@@ -1,12 +1,20 @@
 import { useCallback, useMemo } from 'react';
-import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Tooltip, Box } from '@mui/material';
+import {
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Tooltip,
+  Box,
+} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { navItems } from './navItems';
 
 interface Props {
-  open: boolean;          // expanded (true) or collapsed-to-icons (false) — desktop/tablet only
-  isMobile: boolean;       // are we on a small screen?
-  mobileOpen: boolean;     // is the overlay sidebar open on mobile?
+  open: boolean; // expanded (true) or collapsed-to-icons (false) — desktop/tablet only
+  isMobile: boolean; // are we on a small screen?
+  mobileOpen: boolean; // is the overlay sidebar open on mobile?
   onCloseMobile: () => void;
 }
 
@@ -27,43 +35,41 @@ export default function Sidebar({ open, isMobile, mobileOpen, onCloseMobile }: P
   // Memoized so it only rebuilds when something it depends on actually changes.
   const navList = useMemo(
     () => (
-    <Box sx={{ mt: isMobile ? 0 : 'var(--appbar-height)', overflowX: 'hidden' }}>
-      <List sx={{ px: 1, py: 1.5 }}>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isSelected = location.pathname === item.path;
+      <Box sx={{ mt: isMobile ? 0 : 'var(--appbar-height)', overflowX: 'hidden' }}>
+        <List sx={{ px: 1, py: 1.5 }}>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isSelected = location.pathname === item.path;
 
-          const button = (
-            <ListItemButton
-              selected={isSelected}
-              onClick={() => handleNavigate(item.path)}
-              sx={{
-                justifyContent: open ? 'flex-start' : 'center',
-                px: 2.5,
-                minHeight: 48,
-              }}
-            >
-              <ListItemIcon
-                sx={{ minWidth: 0, mr: open ? 2 : 0, justifyContent: 'center' }}
+            const button = (
+              <ListItemButton
+                selected={isSelected}
+                onClick={() => handleNavigate(item.path)}
+                sx={{
+                  justifyContent: open ? 'flex-start' : 'center',
+                  px: 2.5,
+                  minHeight: 48,
+                }}
               >
-                <Icon />
-              </ListItemIcon>
-              {/* Only show the page name when expanded */}
-              {open && <ListItemText primary={item.label} />}
-            </ListItemButton>
-          );
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 2 : 0, justifyContent: 'center' }}>
+                  <Icon />
+                </ListItemIcon>
+                {/* Only show the page name when expanded */}
+                {open && <ListItemText primary={item.label} />}
+              </ListItemButton>
+            );
 
-          // When collapsed, wrap in a Tooltip so the name still shows on hover
-          return open ? (
-            <div key={item.path}>{button}</div>
-          ) : (
-            <Tooltip title={item.label} placement="right" key={item.path}>
-              {button}
-            </Tooltip>
-          );
-        })}
-      </List>
-    </Box>
+            // When collapsed, wrap in a Tooltip so the name still shows on hover
+            return open ? (
+              <div key={item.path}>{button}</div>
+            ) : (
+              <Tooltip title={item.label} placement="right" key={item.path}>
+                {button}
+              </Tooltip>
+            );
+          })}
+        </List>
+      </Box>
     ),
     [isMobile, open, location.pathname, handleNavigate]
   );

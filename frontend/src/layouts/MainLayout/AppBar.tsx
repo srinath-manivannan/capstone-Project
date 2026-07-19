@@ -7,6 +7,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../app/hooks';
+import { logout } from '../../features/auth/authSlice';
 import { useColorMode } from '../../theme/Colormodecontext';
 
 interface Props {
@@ -30,11 +32,14 @@ export default function AppBar({ onToggleSidebar }: Props) {
     setMode(next);
   }, [mode, setMode]);
 
-  // Log out: drop the token and return to the login screen.
+  const dispatch = useAppDispatch();
+
+  // Log out THROUGH Redux: the auth slice clears user + token (and the
+  // mirrored localStorage copy), then we navigate to the login screen.
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('token');
+    dispatch(logout());
     navigate('/login', { replace: true });
-  }, [navigate]);
+  }, [dispatch, navigate]);
 
   return (
     <MuiAppBar

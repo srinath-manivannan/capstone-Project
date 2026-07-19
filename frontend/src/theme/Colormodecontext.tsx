@@ -5,7 +5,7 @@ import { getTheme } from './theme';
 type ThemeMode = 'light' | 'dark' | 'system';
 
 interface ColorModeContextType {
-  mode: ThemeMode;               // what the user picked: light / dark / system
+  mode: ThemeMode; // what the user picked: light / dark / system
   resolvedMode: 'light' | 'dark'; // what is actually shown right now
   setMode: (mode: ThemeMode) => void;
 }

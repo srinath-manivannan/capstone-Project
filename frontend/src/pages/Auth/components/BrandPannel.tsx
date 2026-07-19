@@ -1,6 +1,15 @@
-import { Box, Typography, Stack } from '@mui/material';
+/**
+ * ============================================
+ * 📄 WHAT : The "story" left side of the auth screen — pure branding.
+ * 🎯 WHY  : Presentational only — no state, no Redux, no props needed.
+ *           All styling lives in BrandPanel.scss (one component = one .scss).
+ * 🔁 FLOW : AuthPage.tsx ➜ THIS FILE
+ * ============================================
+ */
+import { Typography } from '@mui/material';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import './BrandPanel.scss';
 
 const features = [
   'Track your data, branches and team in one place',
@@ -8,68 +17,37 @@ const features = [
   'Secure authentication out of the box',
 ];
 
-/**
- * The "story" left side of the auth screen — pure branding, no form fields.
- * Hidden below 'md' so mobile users get just the glass card, full width.
- */
 export default function BrandPanel() {
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        zIndex: 1,
-        display: { xs: 'none', md: 'flex' },
-        flexDirection: 'column',
-        justifyContent: 'center',
-        flex: 1,
-        color: '#fff',
-        px: { md: 8, lg: 12 },
-        py: 6,
-      }}
-    >
-      <Stack direction="row" spacing={1.5} sx={{ mb: 6, alignItems: 'center' }}>
-        <Box
-          sx={{
-            display: 'grid',
-            placeItems: 'center',
-            width: 44,
-            height: 44,
-            borderRadius: 2,
-            backgroundColor: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,255,255,0.25)',
-          }}
-        >
+    <div className="brand-panel">
+      <div className="brand-panel__logo-row">
+        <span className="brand-panel__logo">
           <RocketLaunchIcon />
-        </Box>
+        </span>
         <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: '0.02em' }}>
           EMC
         </Typography>
-      </Stack>
+      </div>
 
-      <Typography
-        variant="h2"
-        sx={{ fontWeight: 800, mb: 2.5, maxWidth: 520, lineHeight: 1.1, letterSpacing: '-0.02em' }}
-      >
+      <Typography variant="h2" className="brand-panel__headline">
         Build faster.
         <br />
         Ship smarter.
       </Typography>
 
-      <Typography variant="body1" sx={{ maxWidth: 440, mb: 5, opacity: 0.85, lineHeight: 1.7 }}>
-        Manage everything from a single, clean dashboard — your data, your
-        branches and your team, all in one place.
+      <Typography variant="body1" className="brand-panel__tagline">
+        Manage everything from a single, clean dashboard — your data, your branches and your team,
+        all in one place.
       </Typography>
 
-      <Stack spacing={1.75}>
+      <div>
         {features.map((text) => (
-          <Stack key={text} direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-            <CheckCircleRoundedIcon sx={{ fontSize: 20, opacity: 0.9 }} />
-            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              {text}
-            </Typography>
-          </Stack>
+          <div key={text} className="brand-panel__feature">
+            <CheckCircleRoundedIcon sx={{ fontSize: 20 }} />
+            <Typography variant="body2">{text}</Typography>
+          </div>
         ))}
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
 }

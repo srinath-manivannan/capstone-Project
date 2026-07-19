@@ -1,0 +1,66 @@
+// ============================================
+// 📄 WHAT : Styles for BrandPanel — the left "story" side of the auth screen.
+// ============================================
+@use '../../../styles/variables' as *;
+
+.brand-panel {
+  display: none; // hidden on mobile — the glass card takes the full width
+
+  @media (min-width: 900px) {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    color: #fff;
+    padding: 48px 64px;
+  }
+
+  @media (min-width: 1200px) {
+    padding: 48px 96px;
+  }
+
+  &__logo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid $glass-border;
+  }
+
+  &__headline {
+    font-weight: 800;
+    margin-bottom: 20px;
+    max-width: 520px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  &__tagline {
+    max-width: 440px;
+    margin-bottom: 40px;
+    opacity: 0.85;
+    line-height: 1.7;
+  }
+
+  &__feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.9;
+
+    + .brand-panel__feature {
+      margin-top: 14px;
+    }
+  }
+}

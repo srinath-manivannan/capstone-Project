@@ -1,0 +1,10 @@
+// ============================================
+// 📄 WHAT : Styles unique to RegisterForm.
+//           (Shared .glass-input / .auth-submit live in AuthPage.scss.)
+// ============================================
+.register-form {
+  .MuiAlert-root {
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+}

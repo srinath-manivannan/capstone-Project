@@ -1,26 +1,87 @@
+/**
+ * ============================================
+ * 📄 WHAT : The items table — READ (list) + UPDATE (PATCH) + DELETE.
+ * 🎯 WHY  : Reads the list straight from Redux (selector) and dispatches
+ *           thunks for changes. Each row is a memo()ized component, so
+ *           editing ONE row doesn't re-render every other row.
+ * 🔁 FLOW : selector(items) ➜ render rows ➜ click ➜ dispatch(patch/delete)
+ *           ➜ slice updates list ➜ ONLY the changed row re-renders
+ * ============================================
+ */
+import { memo } from 'react';
 import {
-  Card, CardContent, Typography, Table, TableBody, TableCell, TableHead,
-  TableRow, IconButton, Stack, Box,
+  Card,
+  CardContent,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  IconButton,
 } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import type { Item } from '../../../services/itemService';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { patchItem, deleteItem } from '../../../features/items/itemsThunks';
+import { selectItems } from '../../../features/items/itemsSelectors';
+import type { Item } from '../../../features/items/itemsTypes';
+import './ItemList.scss';
 
-// This child receives the DATA (items) plus two callbacks from the parent.
-// It renders the table and calls the callbacks on click — again, it holds no
-// state of its own and knows nothing about the API.
-interface Props {
-  items: Item[];
-  onDelete: (id: string) => void;
-  onChangeQuantity: (id: string, quantity: number) => void;
-}
+/**
+ * One row. memo() = re-render ONLY when this row's `item` object changes.
+ * The slice replaces just the edited item, so all other rows keep their
+ * old object reference and skip re-rendering — that's the optimization.
+ */
+const ItemRow = memo(function ItemRow({ item }: { item: Item }) {
+  const dispatch = useAppDispatch();
 
-export default function ItemList({ items, onDelete, onChangeQuantity }: Props) {
+  return (
+    <TableRow hover>
+      <TableCell className="item-list__name">{item.name}</TableCell>
+      <TableCell sx={{ color: 'text.secondary' }}>{item.description || '—'}</TableCell>
+      <TableCell align="center">
+        {/* PATCH — partial update: we send ONLY { quantity } */}
+        <span className="item-list__qty-controls">
+          <IconButton
+            size="small"
+            disabled={item.quantity <= 0}
+            onClick={() =>
+              dispatch(patchItem({ id: item._id, changes: { quantity: item.quantity - 1 } }))
+            }
+          >
+            <RemoveRoundedIcon fontSize="small" />
+          </IconButton>
+          <span className="item-list__qty-value">{item.quantity}</span>
+          <IconButton
+            size="small"
+            onClick={() =>
+              dispatch(patchItem({ id: item._id, changes: { quantity: item.quantity + 1 } }))
+            }
+          >
+            <AddRoundedIcon fontSize="small" />
+          </IconButton>
+        </span>
+      </TableCell>
+      <TableCell align="right">
+        {/* DELETE */}
+        <IconButton color="error" onClick={() => dispatch(deleteItem(item._id))}>
+          <DeleteOutlineRoundedIcon />
+        </IconButton>
+      </TableCell>
+    </TableRow>
+  );
+});
+
+function ItemList() {
+  // READ from Redux — the single source of truth. No local copy.
+  const items = useAppSelector(selectItems);
+
   if (items.length === 0) {
     return (
       <Card elevation={0}>
-        <CardContent sx={{ p: 4, textAlign: 'center' }}>
+        <CardContent className="item-list__empty">
           <Typography color="text.secondary">No items yet — add your first one above.</Typography>
         </CardContent>
       </Card>
@@ -28,9 +89,9 @@ export default function ItemList({ items, onDelete, onChangeQuantity }: Props) {
   }
 
   return (
-    <Card elevation={0}>
+    <Card elevation={0} className="item-list">
       <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
-        <Box sx={{ overflowX: 'auto' }}>
+        <div className="item-list__scroll">
           <Table>
             <TableHead>
               <TableRow>
@@ -42,42 +103,14 @@ export default function ItemList({ items, onDelete, onChangeQuantity }: Props) {
             </TableHead>
             <TableBody>
               {items.map((item) => (
-                <TableRow key={item._id} hover>
-                  <TableCell sx={{ fontWeight: 600 }}>{item.name}</TableCell>
-                  <TableCell sx={{ color: 'text.secondary' }}>{item.description || '—'}</TableCell>
-                  <TableCell align="center">
-                    {/* UPDATE (PUT) — bump the quantity up or down */}
-                    <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'center', alignItems: 'center' }}>
-                      <IconButton
-                        size="small"
-                        disabled={item.quantity <= 0}
-                        onClick={() => onChangeQuantity(item._id, item.quantity - 1)}
-                      >
-                        <RemoveRoundedIcon fontSize="small" />
-                      </IconButton>
-                      <Typography sx={{ minWidth: 28, textAlign: 'center', fontWeight: 600 }}>
-                        {item.quantity}
-                      </Typography>
-                      <IconButton
-                        size="small"
-                        onClick={() => onChangeQuantity(item._id, item.quantity + 1)}
-                      >
-                        <AddRoundedIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
-                  </TableCell>
-                  <TableCell align="right">
-                    {/* DELETE */}
-                    <IconButton color="error" onClick={() => onDelete(item._id)}>
-                      <DeleteOutlineRoundedIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                <ItemRow key={item._id} item={item} />
               ))}
             </TableBody>
           </Table>
-        </Box>
+        </div>
       </CardContent>
     </Card>
   );
 }
+
+export default memo(ItemList);

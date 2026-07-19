@@ -1,0 +1,15 @@
+// ============================================
+// 📄 WHAT : Styles for ItemsPage (the page shell only — the form and list
+//           have their own .scss files).
+// ============================================
+.items-page {
+  &__spinner {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  .MuiAlert-root {
+    margin-bottom: 16px;
+  }
+}

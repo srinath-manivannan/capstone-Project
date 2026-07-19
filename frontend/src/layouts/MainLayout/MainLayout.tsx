@@ -13,7 +13,7 @@ export default function MainLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // < 600px
 
-  const [open, setOpen] = useState(true);        // expanded/collapsed, desktop & tablet
+  const [open, setOpen] = useState(true); // expanded/collapsed, desktop & tablet
   const [mobileOpen, setMobileOpen] = useState(false); // overlay open/closed, mobile only
 
   const handleToggleSidebar = useCallback(() => {

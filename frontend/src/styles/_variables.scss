@@ -1,0 +1,23 @@
+// ============================================
+// 📄 WHAT : Global SCSS variables — the design tokens of the app.
+// 🎯 WHY  : Colors/sizes defined ONCE; every component .scss imports this
+//           with `@use '../../styles/variables' as *;` (DRY styling).
+// ============================================
+
+// Brand (matches the MUI theme in theme/theme.ts — keep them in sync)
+$brand-indigo: #4f46e5;
+$brand-indigo-dark: #4338ca;
+$brand-purple: #7c3aed;
+$brand-pink: #db2777;
+
+// The auth screen gradient
+$auth-gradient: linear-gradient(135deg, $brand-indigo 0%, $brand-purple 55%, $brand-pink 100%);
+
+// Glass surfaces (auth card)
+$glass-bg: rgba(255, 255, 255, 0.1);
+$glass-border: rgba(255, 255, 255, 0.25);
+$white-70: rgba(255, 255, 255, 0.7);
+$white-60: rgba(255, 255, 255, 0.6);
+
+// Layout sizes are CSS custom properties (in main.scss) because MUI's sx
+// reads them at runtime with var(--name); SCSS variables compile away.

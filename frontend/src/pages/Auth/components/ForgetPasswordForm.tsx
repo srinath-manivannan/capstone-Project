@@ -1,56 +1,66 @@
-import { useState } from 'react';
+/**
+ * ============================================
+ * 📄 WHAT : The Forgot-Password form — same pattern, plus a SUCCESS message.
+ * 🎯 WHY  : Shows how a thunk result that isn't a login (just a message)
+ *           flows through the slice and back via a selector.
+ * 🔁 FLOW : submit ➜ dispatch(forgotPassword) ➜ thunk ➜ backend
+ *           ➜ slice stores forgotMessage ➜ selector shows the Alert
+ * ============================================
+ */
 import { useFormik } from 'formik';
 import { Box, TextField, Button, Typography, Link, Alert } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { forgotPassword } from '../../../features/auth/authThunks';
+import {
+  selectAuthLoading,
+  selectAuthError,
+  selectForgotMessage,
+} from '../../../features/auth/authSelectors';
 import { forgotPasswordSchema } from '../authValidation';
-import { forgotPassword } from '../../../services/authService';
 import AuthHeader from './AuthHeader';
-import { glassInputSx, authSubmitSx, authLinkSx } from './glassInputSx';
+import './ForgetPasswordForm.scss';
 
 interface Props {
   onBackToLogin: () => void;
 }
 
 export default function ForgotPasswordForm({ onBackToLogin }: Props) {
-  const [successMessage, setSuccessMessage] = useState('');
-  const [serverError, setServerError] = useState('');
+  const dispatch = useAppDispatch();
+
+  const loading = useAppSelector(selectAuthLoading);
+  const serverError = useAppSelector(selectAuthError);
+  const successMessage = useAppSelector(selectForgotMessage);
 
   const formik = useFormik({
     initialValues: { email: '' },
     validationSchema: forgotPasswordSchema,
-    onSubmit: async (values, { setSubmitting }) => {
-      setServerError('');
-      setSuccessMessage('');
-      try {
-        const res = await forgotPassword(values);
-        setSuccessMessage(res.data.message);
-      } catch (err: any) {
-        setServerError(err?.response?.data?.message || 'Something went wrong. Please try again.');
-      } finally {
-        setSubmitting(false);
-      }
+    onSubmit: (values) => {
+      // Fire-and-forget: the slice stores success/error; selectors render it.
+      dispatch(forgotPassword(values));
     },
   });
 
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+    <Box component="form" className="forgot-form" onSubmit={formik.handleSubmit} noValidate>
       <AuthHeader
         title="Reset your password"
         subtitle="Enter your email and we’ll send reset instructions"
       />
 
       {serverError && (
-        <Alert severity="error" variant="filled" sx={{ mb: 2, borderRadius: 2 }}>
+        <Alert severity="error" variant="filled">
           {serverError}
         </Alert>
       )}
       {successMessage && (
-        <Alert severity="success" variant="filled" sx={{ mb: 2, borderRadius: 2 }}>
+        <Alert severity="success" variant="filled">
           {successMessage}
         </Alert>
       )}
 
       <TextField
         fullWidth
+        className="glass-input"
         name="email"
         label="Email"
         autoComplete="email"
@@ -59,7 +69,6 @@ export default function ForgotPasswordForm({ onBackToLogin }: Props) {
         onBlur={formik.handleBlur}
         error={formik.touched.email && Boolean(formik.errors.email)}
         helperText={(formik.touched.email && formik.errors.email) || ' '}
-        sx={glassInputSx}
       />
 
       <Button
@@ -68,18 +77,21 @@ export default function ForgotPasswordForm({ onBackToLogin }: Props) {
         variant="contained"
         size="large"
         disableElevation
-        disabled={formik.isSubmitting}
-        sx={authSubmitSx}
+        className="auth-submit"
+        disabled={loading}
       >
-        {formik.isSubmitting ? 'Sending…' : 'Send Reset Link'}
+        {loading ? 'Sending…' : 'Send Reset Link'}
       </Button>
 
-      <Typography
-        variant="body2"
-        sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', mt: 3 }}
-      >
+      <Typography variant="body2" className="auth-form__footer">
         Remembered it?{' '}
-        <Link component="button" type="button" onClick={onBackToLogin} sx={authLinkSx} underline="hover">
+        <Link
+          component="button"
+          type="button"
+          className="auth-link"
+          onClick={onBackToLogin}
+          underline="hover"
+        >
           Back to Sign In
         </Link>
       </Typography>

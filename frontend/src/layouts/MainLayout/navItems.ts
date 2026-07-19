@@ -5,8 +5,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import type { SvgIconComponent } from '@mui/icons-material';
 
 export interface NavItem {
-  label: string;   // shown when sidebar is expanded
-  path: string;    // route it links to
+  label: string; // shown when sidebar is expanded
+  path: string; // route it links to
   icon: SvgIconComponent; // shown always (collapsed or expanded)
 }
 

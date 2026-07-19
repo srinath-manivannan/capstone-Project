@@ -1,0 +1,30 @@
+// ============================================
+// 📄 WHAT : Styles for ItemList — the items table (+ per-row controls).
+// ============================================
+.item-list {
+  &__scroll {
+    overflow-x: auto; // wide table scrolls inside the card, never the page
+  }
+
+  &__empty {
+    padding: 32px;
+    text-align: center;
+  }
+
+  &__qty-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  &__qty-value {
+    min-width: 28px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  &__name {
+    font-weight: 600;
+  }
+}

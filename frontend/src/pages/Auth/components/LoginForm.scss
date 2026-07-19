@@ -1,0 +1,10 @@
+// ============================================
+// 📄 WHAT : Styles unique to LoginForm.
+//           (Shared .glass-input / .auth-submit live in AuthPage.scss.)
+// ============================================
+.login-form {
+  .MuiAlert-root {
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+}

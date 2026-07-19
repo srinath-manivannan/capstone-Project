@@ -1,0 +1,36 @@
+// ============================================
+// 📄 WHAT : Styles for ItemForm — the "add a new item" card.
+// ============================================
+.item-form {
+  margin-bottom: 20px;
+
+  &__title {
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @media (min-width: 600px) {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  &__name {
+    flex: 2;
+  }
+  &__qty {
+    flex: 1;
+  }
+  &__desc {
+    flex: 3;
+  }
+
+  &__error {
+    margin-top: 12px;
+  }
+}
