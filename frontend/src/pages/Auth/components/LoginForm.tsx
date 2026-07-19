@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import {
-  Box, TextField, Button, Typography, Link, Alert, InputAdornment, IconButton,
+  Box, Stack, TextField, Button, Typography, Link, Alert, InputAdornment, IconButton,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { loginSchema } from '../authValidation';
 import { loginUser } from '../../../services/authService';
-import { glassInputSx } from './glassInputSx';
+import AuthHeader from './AuthHeader';
+import { glassInputSx, authSubmitSx, authLinkSx } from './glassInputSx';
 
 interface Props {
   onForgotPassword: () => void;
@@ -39,67 +40,64 @@ export default function LoginForm({ onForgotPassword, onRegister }: Props) {
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} noValidate>
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 700, color: '#fff' }}>
-        Welcome back
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 3 }}>
-        Sign in to continue
-      </Typography>
+      <AuthHeader title="Welcome back" subtitle="Sign in to continue to your dashboard" />
 
       {serverError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" variant="filled" sx={{ mb: 2, borderRadius: 2 }}>
           {serverError}
         </Alert>
       )}
 
-      <TextField
-        fullWidth
-        name="email"
-        label="Email"
-        margin="normal"
-        value={formik.values.email}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.email && Boolean(formik.errors.email)}
-        helperText={formik.touched.email && formik.errors.email}
-        sx={glassInputSx}
-      />
+      <Stack spacing={2}>
+        <TextField
+          fullWidth
+          name="email"
+          label="Email"
+          autoComplete="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={(formik.touched.email && formik.errors.email) || ' '}
+          sx={glassInputSx}
+        />
 
-      <TextField
-        fullWidth
-        name="password"
-        label="Password"
-        type={showPassword ? 'text' : 'password'}
-        margin="normal"
-        value={formik.values.password}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.password && Boolean(formik.errors.password)}
-        helperText={formik.touched.password && formik.errors.password}
-        sx={glassInputSx}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword((p) => !p)}
-                  edge="end"
-                  sx={{ color: 'rgba(255,255,255,0.7)' }}
-                >
-                  {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          },
-        }}
-      />
+        <TextField
+          fullWidth
+          name="password"
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          autoComplete="current-password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={(formik.touched.password && formik.errors.password) || ' '}
+          sx={glassInputSx}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((p) => !p)}
+                    edge="end"
+                    sx={{ color: 'rgba(255,255,255,0.7)' }}
+                  >
+                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </Stack>
 
-      <Box sx={{ textAlign: 'right', mt: 1 }}>
+      <Box sx={{ textAlign: 'right', mt: 0.5, mb: 1 }}>
         <Link
           component="button"
           type="button"
           onClick={onForgotPassword}
-          sx={{ color: 'rgba(255,255,255,0.8)' }}
+          sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem' }}
           underline="hover"
         >
           Forgot password?
@@ -111,21 +109,19 @@ export default function LoginForm({ onForgotPassword, onRegister }: Props) {
         fullWidth
         variant="contained"
         size="large"
+        disableElevation
         disabled={formik.isSubmitting}
-        sx={{ mt: 3, mb: 2, py: 1.3 }}
+        sx={authSubmitSx}
       >
-        {formik.isSubmitting ? 'Signing in...' : 'Sign In'}
+        {formik.isSubmitting ? 'Signing in…' : 'Sign In'}
       </Button>
 
-      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+      <Typography
+        variant="body2"
+        sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', mt: 3 }}
+      >
         Don&apos;t have an account?{' '}
-        <Link
-          component="button"
-          type="button"
-          onClick={onRegister}
-          sx={{ color: '#fff', fontWeight: 600 }}
-          underline="hover"
-        >
+        <Link component="button" type="button" onClick={onRegister} sx={authLinkSx} underline="hover">
           Register
         </Link>
       </Typography>

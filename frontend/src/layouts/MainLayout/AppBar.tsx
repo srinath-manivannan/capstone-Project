@@ -1,9 +1,10 @@
-import { AppBar as MuiAppBar, Toolbar, IconButton, Typography, Tooltip } from '@mui/material';
+import { AppBar as MuiAppBar, Toolbar, IconButton, Typography, Tooltip, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import LogoutIcon from '@mui/icons-material/Logout';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useColorMode } from '../../theme/Colormodecontext';
@@ -38,21 +39,36 @@ export default function AppBar({ onToggleSidebar }: Props) {
   return (
     <MuiAppBar
       position="fixed" // always stays at the top, even when the page scrolls
-      elevation={1}
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1, // sits ABOVE the sidebar
         height: 'var(--appbar-height)',
         justifyContent: 'center',
       }}
     >
-      <Toolbar>
-        <IconButton color="inherit" edge="start" onClick={onToggleSidebar} sx={{ mr: 2 }}>
+      <Toolbar sx={{ gap: 1 }}>
+        <IconButton color="inherit" edge="start" onClick={onToggleSidebar} sx={{ mr: 0.5 }}>
           <MenuIcon />
         </IconButton>
 
-        <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-          My App
-        </Typography>
+        {/* Brand mark + name */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexGrow: 1 }}>
+          <Box
+            sx={{
+              display: 'grid',
+              placeItems: 'center',
+              width: 34,
+              height: 34,
+              borderRadius: 2,
+              color: '#fff',
+              background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+            }}
+          >
+            <RocketLaunchIcon sx={{ fontSize: 20 }} />
+          </Box>
+          <Typography variant="h6" noWrap sx={{ fontWeight: 700, letterSpacing: '0.01em' }}>
+            EMC
+          </Typography>
+        </Box>
 
         <Tooltip title={`Theme: ${mode}`}>
           <IconButton color="inherit" onClick={cycleMode}>

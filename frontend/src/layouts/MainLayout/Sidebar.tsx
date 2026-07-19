@@ -28,7 +28,7 @@ export default function Sidebar({ open, isMobile, mobileOpen, onCloseMobile }: P
   const navList = useMemo(
     () => (
     <Box sx={{ mt: isMobile ? 0 : 'var(--appbar-height)', overflowX: 'hidden' }}>
-      <List>
+      <List sx={{ px: 1, py: 1.5 }}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const isSelected = location.pathname === item.path;

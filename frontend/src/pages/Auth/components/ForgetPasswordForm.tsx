@@ -3,7 +3,8 @@ import { useFormik } from 'formik';
 import { Box, TextField, Button, Typography, Link, Alert } from '@mui/material';
 import { forgotPasswordSchema } from '../authValidation';
 import { forgotPassword } from '../../../services/authService';
-import { glassInputSx } from './glassInputSx';
+import AuthHeader from './AuthHeader';
+import { glassInputSx, authSubmitSx, authLinkSx } from './glassInputSx';
 
 interface Props {
   onBackToLogin: () => void;
@@ -32,20 +33,18 @@ export default function ForgotPasswordForm({ onBackToLogin }: Props) {
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit} noValidate>
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 700, color: '#fff' }}>
-        Reset your password
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 3 }}>
-        Enter your email and we&apos;ll send you reset instructions
-      </Typography>
+      <AuthHeader
+        title="Reset your password"
+        subtitle="Enter your email and we’ll send reset instructions"
+      />
 
       {serverError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" variant="filled" sx={{ mb: 2, borderRadius: 2 }}>
           {serverError}
         </Alert>
       )}
       {successMessage && (
-        <Alert severity="success" sx={{ mb: 2 }}>
+        <Alert severity="success" variant="filled" sx={{ mb: 2, borderRadius: 2 }}>
           {successMessage}
         </Alert>
       )}
@@ -54,12 +53,12 @@ export default function ForgotPasswordForm({ onBackToLogin }: Props) {
         fullWidth
         name="email"
         label="Email"
-        margin="normal"
+        autoComplete="email"
         value={formik.values.email}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         error={formik.touched.email && Boolean(formik.errors.email)}
-        helperText={formik.touched.email && formik.errors.email}
+        helperText={(formik.touched.email && formik.errors.email) || ' '}
         sx={glassInputSx}
       />
 
@@ -68,21 +67,19 @@ export default function ForgotPasswordForm({ onBackToLogin }: Props) {
         fullWidth
         variant="contained"
         size="large"
+        disableElevation
         disabled={formik.isSubmitting}
-        sx={{ mt: 3, mb: 2, py: 1.3 }}
+        sx={authSubmitSx}
       >
-        {formik.isSubmitting ? 'Sending...' : 'Send Reset Link'}
+        {formik.isSubmitting ? 'Sending…' : 'Send Reset Link'}
       </Button>
 
-      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
+      <Typography
+        variant="body2"
+        sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', mt: 3 }}
+      >
         Remembered it?{' '}
-        <Link
-          component="button"
-          type="button"
-          onClick={onBackToLogin}
-          sx={{ color: '#fff', fontWeight: 600 }}
-          underline="hover"
-        >
+        <Link component="button" type="button" onClick={onBackToLogin} sx={authLinkSx} underline="hover">
           Back to Sign In
         </Link>
       </Typography>
