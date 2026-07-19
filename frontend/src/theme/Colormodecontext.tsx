@@ -1,23 +1,21 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+/**
+ * ============================================
+ * 📄 WHAT : The ColorModeProvider — owns the light/dark/system choice.
+ * 🎯 WHY  : Wraps the whole app ONCE (in main.tsx): every component gets the
+ *           MUI theme, and the user's choice survives visits (localStorage —
+ *           allowed here: it's a UI preference, not app data).
+ *           The context + hook live in useColorMode.ts (components-only file
+ *           rule, enforced by ESLint's react-refresh check).
+ * 🔁 FLOW : main.tsx ➜ THIS FILE ➜ ThemeProvider ➜ every component
+ * ============================================
+ */
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material';
 import { getTheme } from './theme';
+import { ColorModeContext, type ThemeMode } from './useColorMode';
 
-type ThemeMode = 'light' | 'dark' | 'system';
-
-interface ColorModeContextType {
-  mode: ThemeMode; // what the user picked: light / dark / system
-  resolvedMode: 'light' | 'dark'; // what is actually shown right now
-  setMode: (mode: ThemeMode) => void;
-}
-
-const ColorModeContext = createContext<ColorModeContextType | undefined>(undefined);
 const STORAGE_KEY = 'app-theme-mode';
 
-/**
- * Wrap your whole app with this ONE time (in main.tsx).
- * It gives every component access to the current theme mode,
- * and remembers the user's choice between visits (localStorage).
- */
 export function ColorModeProvider({ children }: { children: ReactNode }) {
   // Detects the OS/browser's own dark mode setting
   const systemPrefersDark = useMediaQuery('(prefers-color-scheme: dark)');
@@ -38,10 +36,7 @@ export function ColorModeProvider({ children }: { children: ReactNode }) {
   // Only rebuild the theme object when the resolved mode actually changes
   const theme = useMemo(() => getTheme(resolvedMode), [resolvedMode]);
 
-  const value = useMemo(
-    () => ({ mode, resolvedMode, setMode: setModeState }),
-    [mode, resolvedMode]
-  );
+  const value = useMemo(() => ({ mode, resolvedMode, setMode: setModeState }), [mode, resolvedMode]);
 
   return (
     <ColorModeContext.Provider value={value}>
@@ -51,11 +46,4 @@ export function ColorModeProvider({ children }: { children: ReactNode }) {
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
-}
-
-// Hook every component will use: const { mode, setMode } = useColorMode();
-export function useColorMode() {
-  const ctx = useContext(ColorModeContext);
-  if (!ctx) throw new Error('useColorMode must be used inside <ColorModeProvider>');
-  return ctx;
 }

@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
-import { useColorMode } from '../../theme/Colormodecontext';
+import { useColorMode } from '../../theme/useColorMode';
 
 interface Props {
   onToggleSidebar: () => void; // parent (MainLayout) decides what "toggle" means
