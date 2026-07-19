@@ -1,17 +1,20 @@
 {
+  // TypeScript compiler settings for the backend.
+  // 💬 INTERVIEW: "What does tsconfig.json do?" — it tells the TypeScript
+  // compiler HOW to check and compile your code (rules + input + output).
   "compilerOptions": {
-    "target": "ES2021",
-    "module": "node16",
-    "moduleResolution": "node16",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "outDir": "dist",
-    "rootDir": ".",
-    "types": ["node"]
+    "target": "ES2021",              // which JavaScript version to compile down to
+    "module": "node16",              // how import/export is compiled (Node.js style)
+    "moduleResolution": "node16",    // how "import x from './y'" finds files
+    "esModuleInterop": true,         // lets us `import express from 'express'` cleanly
+    "forceConsistentCasingInFileNames": true, // 'User.model' ≠ 'user.model' — catches case bugs (Linux is case-sensitive!)
+    "strict": true,                  // ALL strict type checks on — always keep this true
+    "skipLibCheck": true,            // don't type-check node_modules (faster builds)
+    "resolveJsonModule": true,       // allows importing .json files
+    "outDir": "dist",                // compiled .js output goes here (gitignored)
+    "rootDir": "src",                // all source code lives in src/
+    "types": ["node"]                // include Node.js globals (process, __dirname…)
   },
-  "include": ["**/*.ts"],
+  "include": ["src/**/*.ts"],        // compile everything inside src/
   "exclude": ["node_modules", "dist"]
 }

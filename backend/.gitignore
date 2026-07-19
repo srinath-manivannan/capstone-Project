@@ -1,29 +1,31 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# ============================================
+# 📄 WHAT : Tells git which files must NEVER be committed.
+# 🎯 WHY  : Two reasons — SECRETS (.env) and NOISE (node_modules, dist
+#           are rebuildable from package.json / src, so committing them
+#           only bloats the repo).
+# ============================================
 
+# Dependencies — reinstall anytime with `npm install`
 node_modules
-dist
-dist-ssr
-*.local
 
-# Environment files — never commit real secrets
+# Build output — regenerate anytime with `npm run build`
+dist
+
+# 🔒 Environment files — real secrets. Commit ONLY .env.example.
+# 💬 INTERVIEW: "What if a secret was committed once?" — rotate it (change
+# the real password/secret). Deleting the file later does NOT remove it
+# from git history.
 .env
 .env.*
 !.env.example
 
-# Editor directories and files
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Editor/OS junk
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

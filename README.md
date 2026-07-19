@@ -5,8 +5,10 @@ includes: JWT authentication (register / login / logout), a themeable MUI layout
 (AppBar + collapsible Sidebar, light/dark), protected routes, and **one complete
 example CRUD resource ("Items")** you copy to build your own features.
 
-> New to this? Read the two "How it works" sections and the **"How to add a new
-> resource"** guide near the bottom — they show the exact pattern to repeat.
+> 📘 **Learning the backend?** Start with **[BACKEND-GUIDE.md](BACKEND-GUIDE.md)** —
+> it explains every HTTP verb, the full request flowchart, SRP/DRY/KISS,
+> security (hashing, JWT, env vars), recipe cards for adding new APIs, and an
+> interview Q&A bank. Every backend file also carries a WHAT/WHY/FLOW header.
 
 ---
 
@@ -24,22 +26,25 @@ example CRUD resource ("Items")** you copy to build your own features.
 
 ```
 backend/
-├── server.ts              # entry: connect DB, then start listening
-├── app.ts                 # express app: middleware + mounts every /api route
-├── config/
-│   ├── db.ts              # MongoDB connection
-│   └── env.ts            # loads + validates .env
-├── models/               # Mongoose schemas (User, Item)
-├── types/                # TypeScript interfaces (+ express.d.ts augmentation)
-├── validations/          # Yup schemas that guard each route
-├── middleware/
-│   ├── auth.ts           # `protect` — verifies the JWT on protected routes
-│   ├── validateRequest.ts# runs a Yup schema before the controller
-│   └── errorHandler.ts   # turns thrown errors into clean JSON
-├── controllers/          # thin: read request -> call service -> send response
-├── services/             # the real work: DB queries + business rules
-├── routes/               # maps URLs -> controllers
-└── utils/                # AppError, asyncHandler, generateToken
+├── .env.example           # template of required secrets (copy to .env)
+├── tsconfig.json          # TypeScript compiler rules (annotated)
+└── src/
+    ├── server.ts          # entry: connect DB, then start listening
+    ├── app.ts             # express app: middleware + mounts every /api route
+    ├── config/
+    │   ├── db.ts          # MongoDB connection
+    │   └── env.ts         # loads + validates .env
+    ├── models/            # Mongoose schemas (User, Item)
+    ├── types/             # TypeScript interfaces (+ express.d.ts augmentation)
+    ├── validations/       # Yup schemas that guard each route
+    ├── middleware/
+    │   ├── auth.ts        # `protect` — verifies the JWT on protected routes
+    │   ├── validateRequest.ts # runs a Yup schema before the controller
+    │   └── errorHandler.ts    # turns thrown errors into clean JSON
+    ├── controllers/       # thin: read request -> call service -> send response
+    ├── services/          # the real work: DB queries + business rules
+    ├── routes/            # maps URLs -> controllers
+    └── utils/             # AppError, asyncHandler, generateToken
 
 frontend/src/
 ├── main.tsx              # entry: ColorModeProvider + App
@@ -144,13 +149,14 @@ rename. That's it — same 6 backend files + 1 frontend service + 1 page.
 
 All require a valid token (`Authorization: Bearer <token>`).
 
-| Method | Endpoint          | Purpose            |
-|--------|-------------------|--------------------|
-| GET    | `/api/items`      | list your items    |
-| GET    | `/api/items/:id`  | read one item      |
-| POST   | `/api/items`      | create an item     |
-| PUT    | `/api/items/:id`  | update an item     |
-| DELETE | `/api/items/:id`  | delete an item     |
+| Method | Endpoint          | Purpose                     |
+|--------|-------------------|-----------------------------|
+| GET    | `/api/items`      | list your items             |
+| GET    | `/api/items/:id`  | read one item               |
+| POST   | `/api/items`      | create an item              |
+| PUT    | `/api/items/:id`  | update an item (full)       |
+| PATCH  | `/api/items/:id`  | update an item (partial)    |
+| DELETE | `/api/items/:id`  | delete an item              |
 
 ---
 
