@@ -1,60 +1,160 @@
-# capstone-Project
+# EMC — MERN + TypeScript Starter
 
-frontend :
-src/
-├── main.tsx                  # app entry, wraps everything in ThemeProvider
-├── App.tsx                   # sets up router
-├── theme/
-│   └── theme.ts              # MUI theme: colors, fonts, breakpoints
-├── layouts/
-│   └── MainLayout/
-│       ├── MainLayout.tsx    # combines AppBar + Sidebar + page content
-│       ├── AppBar.tsx        # top bar
-│       ├── Sidebar.tsx       # side navigation (MUI Drawer)
-│       └── index.ts
-├── pages/                    # one folder per screen/branch
-│   ├── Dashboard/
-│   │   └── Dashboard.tsx
-│   └── Branches/
-│       └── BranchList.tsx
-├── routes/
-│   └── AppRoutes.tsx         # all page routes, each wrapped in MainLayout
-├── context/
-│   └── SidebarContext.tsx    # remembers if sidebar is open/closed
-├── services/
-│   └── api.ts                # connects to your backend
-├── types/
-│   └── index.ts              # shared TypeScript types
-└── hooks/
-    └── useResponsive.ts      # helper to detect mobile vs desktop
+A clean, reusable **MERN** base setup you can drop any project into. It already
+includes: JWT authentication (register / login / logout), a themeable MUI layout
+(AppBar + collapsible Sidebar, light/dark), protected routes, and **one complete
+example CRUD resource ("Items")** you copy to build your own features.
 
+> New to this? Read the two "How it works" sections and the **"How to add a new
+> resource"** guide near the bottom — they show the exact pattern to repeat.
 
+---
 
-    backend:
-    backend/
-├── src/
-│   ├── server.ts                 # starts the app, connects to DB
-│   ├── app.ts                    # express app config, mounts all routes
-│   ├── config/
-│   │   ├── db.ts                 # MongoDB connection logic
-│   │   └── env.ts                # loads .env variables safely
-│   ├── models/
-│   │   └── Item.model.ts         # Mongoose schema
-│   ├── routes/
-│   │   └── item.routes.ts        # defines URL endpoints
-│   ├── controllers/
-│   │   └── item.controller.ts    # handles request/response
-│   ├── services/
-│   │   └── item.service.ts       # business logic, talks to the model
-│   ├── middleware/
-│   │   ├── errorHandler.ts       # catches errors, sends clean response
-│   │   └── validateRequest.ts    # checks incoming data before it hits controller
-│   ├── types/
-│   │   └── item.types.ts         # shared TypeScript interfaces
-│   └── utils/
-│       ├── asyncHandler.ts       # wraps async functions so errors don't crash the app
-│       └── logger.ts             # simple logging helper
-├── .env
-├── .gitignore
-├── package.json
-└── tsconfig.json
+## Tech stack
+
+| Layer     | Tech |
+|-----------|------|
+| Frontend  | React + TypeScript, Vite, MUI, React Router, Formik + Yup, Axios |
+| Backend   | Node + Express (TypeScript), Mongoose (MongoDB), JWT, bcrypt, Yup |
+| Database  | MongoDB (Atlas or local) |
+
+---
+
+## Project structure
+
+```
+backend/
+├── server.ts              # entry: connect DB, then start listening
+├── app.ts                 # express app: middleware + mounts every /api route
+├── config/
+│   ├── db.ts              # MongoDB connection
+│   └── env.ts            # loads + validates .env
+├── models/               # Mongoose schemas (User, Item)
+├── types/                # TypeScript interfaces (+ express.d.ts augmentation)
+├── validations/          # Yup schemas that guard each route
+├── middleware/
+│   ├── auth.ts           # `protect` — verifies the JWT on protected routes
+│   ├── validateRequest.ts# runs a Yup schema before the controller
+│   └── errorHandler.ts   # turns thrown errors into clean JSON
+├── controllers/          # thin: read request -> call service -> send response
+├── services/             # the real work: DB queries + business rules
+├── routes/               # maps URLs -> controllers
+└── utils/                # AppError, asyncHandler, generateToken
+
+frontend/src/
+├── main.tsx              # entry: ColorModeProvider + App
+├── App.tsx               # Router
+├── routes/AppRoutes.tsx  # public /login + protected pages (RequireAuth guard)
+├── theme/                # MUI theme + light/dark color-mode context
+├── layouts/MainLayout/   # AppBar + Sidebar + content area (navItems.ts = menu)
+├── components/           # shared UI (PageHeader)
+├── services/             # api.ts (axios instance) + one service per resource
+└── pages/                # one folder per screen
+    ├── Auth/             # login / register / forgot-password
+    └── Items/            # ⭐ the example CRUD page (copy this)
+```
+
+---
+
+## Getting started
+
+### 1. Backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env        # then fill in the values below
+npm run dev                 # http://localhost:5000
+```
+
+`.env` needs:
+
+```
+MONGO_URI=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/emc?retryWrites=true&w=majority
+JWT_SECRET=any-long-random-string
+```
+
+- Get `MONGO_URI` from **Atlas → Connect → Drivers**. URL-encode special
+  characters in the password (`@` → `%40`, `#` → `%23`).
+- In Atlas, **Network Access → Add IP** (use `0.0.0.0/0` for local dev) or the
+  connection will hang.
+- Generate a secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env        # VITE_API_URL=http://localhost:5000/api
+npm run dev                 # http://localhost:5173
+```
+
+Open http://localhost:5173 → you'll land on **/login**. Register an account, and
+you're in.
+
+---
+
+## How authentication works
+
+1. Register/login hits the backend, which returns a **JWT token**.
+2. The frontend saves it in `localStorage` (`authService` → `LoginForm`).
+3. `api.ts` auto-attaches it as `Authorization: Bearer <token>` on every request.
+4. `RequireAuth` (in `AppRoutes.tsx`) keeps you on `/login` until a token exists.
+5. On the backend, `protect` verifies the token and sets `req.userId` so a user
+   only ever sees their own data. If the token is bad, the API returns 401 and
+   the frontend auto-logs-out (response interceptor in `api.ts`).
+
+## How a request flows (backend)
+
+```
+HTTP request
+  → route            (routes/*.ts)        which URL + method
+  → validateRequest  (Yup schema)         reject bad input early
+  → asyncHandler     (utils)              catch errors so the app never crashes
+  → controller       (thin)               read req, call service, send res
+  → service          (logic)              talk to the model / DB
+  → model            (Mongoose)           MongoDB
+```
+
+Every response has the same shape: `{ success: true, data: ... }`.
+
+---
+
+## ⭐ How to add a new resource (e.g. "Product")
+
+The **Items** feature is the template. To add `Product`, copy the item files and
+rename. That's it — same 6 backend files + 1 frontend service + 1 page.
+
+**Backend** (copy `item.*` → `product.*`):
+1. `types/product.types.ts` — the interface + input types.
+2. `models/Product.model.ts` — the Mongoose schema.
+3. `validations/product.validation.ts` — create/update Yup schemas.
+4. `services/product.service.ts` — getAll / getById / create / update / remove.
+5. `controllers/product.controller.ts` — thin wrappers.
+6. `routes/product.routes.ts` — the 5 CRUD routes.
+7. In `app.ts`, add one line: `app.use('/api/products', productRoutes);`
+
+**Frontend**:
+1. `services/productService.ts` — copy `itemService.ts`, rename endpoints.
+2. `pages/Products/…` — copy the `Items` page/components.
+3. Add a `<Route>` in `routes/AppRoutes.tsx` and an entry in
+   `layouts/MainLayout/navItems.ts`.
+
+### The Items API (reference)
+
+All require a valid token (`Authorization: Bearer <token>`).
+
+| Method | Endpoint          | Purpose            |
+|--------|-------------------|--------------------|
+| GET    | `/api/items`      | list your items    |
+| GET    | `/api/items/:id`  | read one item      |
+| POST   | `/api/items`      | create an item     |
+| PUT    | `/api/items/:id`  | update an item     |
+| DELETE | `/api/items/:id`  | delete an item     |
+
+---
+
+## Scripts
+
+**backend:** `npm run dev` (watch) · `npm run build` · `npm start` · `npm run typecheck`
+**frontend:** `npm run dev` · `npm run build` · `npm run lint`

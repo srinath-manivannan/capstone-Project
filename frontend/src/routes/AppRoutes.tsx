@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import MainLayout from '../layouts/MainLayout/MainLayout';
 import Dashboard from '../pages/Dashboard/Dashboard';
+import ItemsPage from '../pages/Items/ItemsPage';
 import BranchList from '../pages/Branches/BranchList';
 import Settings from '../pages/Settings/Settings';
 import AuthPage from '../pages/Auth/AuthPage';
@@ -38,6 +39,7 @@ export default function AppRoutes() {
         }
       >
         <Route path="/" element={<Dashboard />} />
+        <Route path="/items" element={<ItemsPage />} />
         <Route path="/branches" element={<BranchList />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
