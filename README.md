@@ -15,6 +15,9 @@ example CRUD resource ("Items")** you copy to build your own features.
 > **[frontend-templates/](frontend-templates/)** — `react-ts` (no Redux),
 > `react-redux-ts`, or `nextjs-ts` — all runnable instantly; this repo's
 > `frontend/` is the full-scale Redux app (auth + MUI + guards).
+> 🧪 **Testing the API?** Read **[API-TESTING-GUIDE.md](API-TESTING-GUIDE.md)** —
+> status codes, curl from zero (including how to WRITE any curl command
+> yourself), Postman click-by-click, and a full 12-step test run of this backend.
 > 🚀 **Shipping it?** Read **[DEVOPS-GUIDE.md](DEVOPS-GUIDE.md)** — quality
 > gates, branching & PR flow, the CI pipeline in `.github/workflows/ci.yml`,
 > deployments, Cloudflare/AWS architectures, DNS and cost optimization.
