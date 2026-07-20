@@ -604,6 +604,35 @@ curl -s -X DELETE $B/items/$ID -H "Authorization: Bearer $TOKEN"
 curl -s -o /dev/null -w "deleted item → %{http_code}\n" $B/items/$ID -H "Authorization: Bearer $TOKEN"
 ```
 
+### Bonus: testing authorization (the 403 path)
+
+The Users API has two tiers, which makes it the perfect place to *see* the
+difference between 401 and 403 with your own eyes:
+
+```bash
+# my own profile — any logged-in user → 200
+curl -s $B/users/me -H "Authorization: Bearer $TOKEN"
+
+# change MY password (needs the current one) → 200
+curl -s -X PATCH $B/users/me/password -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"currentPassword":"Passw0rd#1","newPassword":"NewPass#123","confirmPassword":"NewPass#123"}'
+
+# 🔒 list ALL users as a NORMAL user → 403 Forbidden
+#    (you ARE logged in — you're just not allowed)
+curl -s -o /dev/null -w "normal user listing users → %{http_code}\n" \
+  $B/users -H "Authorization: Bearer $TOKEN"
+
+# same URL with NO token at all → 401 Unauthorized (we don't know who you are)
+curl -s -o /dev/null -w "no token at all            → %{http_code}\n" $B/users
+```
+
+**401 vs 403, demonstrated:** same endpoint, two different failures. No token
+= "who are you?" (401). Valid token, wrong role = "I know you, and no" (403).
+
+Then promote yourself (`cd backend && npm run make-admin -- your@email.com`),
+log in again to get a fresh token, and watch the same request return **200**.
+
 **Build the same 12 as a Postman collection** and you have a reusable
 regression suite: after any backend change, hit "Run collection" and see
 everything still pass.

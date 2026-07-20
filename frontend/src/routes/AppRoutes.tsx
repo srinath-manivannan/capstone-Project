@@ -19,6 +19,7 @@ import MainLayout from '../layouts/MainLayout/MainLayout';
 const AuthPage = lazy(() => import('../pages/Auth/AuthPage'));
 const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
 const ItemsPage = lazy(() => import('../pages/Items/ItemsPage'));
+const UsersPage = lazy(() => import('../pages/Users/UsersPage'));
 const BranchList = lazy(() => import('../pages/Branches/BranchList'));
 const Settings = lazy(() => import('../pages/Settings/Settings'));
 
@@ -59,6 +60,7 @@ export default function AppRoutes() {
         >
           <Route path="/" element={<Dashboard />} />
           <Route path="/items" element={<ItemsPage />} />
+          <Route path="/users" element={<UsersPage />} />
           <Route path="/branches" element={<BranchList />} />
           <Route path="/settings" element={<Settings />} />
         </Route>

@@ -23,6 +23,12 @@ const userSchema = new Schema<IUser>(
     // responses?" — never store plaintext (bcrypt hash) AND hide the field
     // by default at the schema level, exactly like this.
     password: { type: String, required: true, select: false },
+    // AUTHORIZATION: what this user may DO. Defaults to 'user' — nobody can
+    // make themselves an admin by sending role:'admin' at register, because
+    // the register service never reads this field from the request body.
+    // 💬 INTERVIEW: "How do you prevent privilege escalation on signup?" —
+    // never trust client-supplied roles; set them server-side only.
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
   },
   { timestamps: true } // auto createdAt / updatedAt on every document
 );

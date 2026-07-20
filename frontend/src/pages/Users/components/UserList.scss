@@ -1,0 +1,12 @@
+// ============================================
+// 📄 WHAT : Styles for UserList — the admin account table.
+// ============================================
+.user-list {
+  &__scroll {
+    overflow-x: auto; // wide table scrolls inside the card, never the page
+  }
+
+  &__name {
+    font-weight: 600;
+  }
+}

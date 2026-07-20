@@ -179,6 +179,27 @@ All require a valid token (`Authorization: Bearer <token>`).
 | PATCH  | `/api/items/:id`  | update an item (partial)    |
 | DELETE | `/api/items/:id`  | delete an item              |
 
+### The Users API (account management)
+
+Two tiers: **self-service** (any logged-in user, own account only) and
+**admin-only** (403 for normal users — see `middleware/authorize.ts`).
+
+| Method | Endpoint | Who | Purpose |
+|--------|----------|-----|---------|
+| GET | `/api/users/me` | any user | my own profile |
+| PATCH | `/api/users/me/password` | any user | change MY password (needs current password) |
+| GET | `/api/users` | 🔑 admin | list every registered user |
+| PATCH | `/api/users/:id/password` | 🔑 admin | reset someone's password |
+| DELETE | `/api/users/:id` | 🔑 admin | delete a user |
+
+Roles can never be set through the API (that would be privilege escalation).
+Create your first admin out-of-band:
+
+```bash
+cd backend
+npm run make-admin -- your@email.com     # promote an already-registered user
+```
+
 ---
 
 ## Scripts

@@ -14,11 +14,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
 import itemsReducer from '../features/items/itemsSlice';
+import usersReducer from '../features/users/usersSlice';
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer, //  state.auth  — who is logged in
+    auth: authReducer, //   state.auth  — who is logged in
     items: itemsReducer, // state.items — the items list + its loading status
+    users: usersReducer, // state.users — user management (self + admin)
   },
 });
 

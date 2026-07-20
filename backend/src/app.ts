@@ -11,6 +11,7 @@ import cors from 'cors';
 import { env } from './config/env';
 import authRoutes from './routes/auth.routes';
 import itemRoutes from './routes/item.routes';
+import userRoutes from './routes/user.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -34,6 +35,7 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 // ➕ Adding a new resource? Create its files, then add ONE line here.
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes); // ⭐ the example CRUD resource — copy this pattern
+app.use('/api/users', userRoutes); // user management (self-service + admin-only)
 
 // STEP 5: Error handler — MUST be registered LAST.
 // 💬 INTERVIEW: "Why last?" — Express runs middleware in order; an error
