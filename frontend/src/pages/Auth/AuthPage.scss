@@ -14,6 +14,16 @@
   overflow: hidden;
   background: $auth-gradient;
 
+  // A soft dark veil over the gradient. Deepens the backdrop so white text
+  // and the glass card gain real contrast instead of glowing into the pink.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 100% at 20% 20%, transparent 30%, rgba(15, 10, 40, 0.45) 100%);
+    pointer-events: none;
+  }
+
   // Soft decorative glows for depth behind the glass card
   &__glow {
     position: absolute;
@@ -25,7 +35,7 @@
       left: -10%;
       width: 520px;
       height: 520px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 70%);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 70%);
     }
 
     &--bottom {
@@ -33,7 +43,7 @@
       right: 18%;
       width: 460px;
       height: 460px;
-      background: radial-gradient(circle, rgba(219, 39, 119, 0.35), transparent 70%);
+      background: radial-gradient(circle, rgba(219, 39, 119, 0.28), transparent 70%);
     }
   }
 
@@ -62,23 +72,31 @@
 .glass-input {
   .MuiOutlinedInput-root {
     color: #fff;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    // Darker fill (not lighter) — a bright gradient needs INSET contrast so
+    // the field reads as a container, not a pale smudge.
+    background-color: rgba(23, 15, 56, 0.28);
     transition:
       background-color 0.2s ease,
       box-shadow 0.2s ease;
 
+    input {
+      padding-block: 15px; // taller, calmer fields
+    }
+
     fieldset {
-      border-color: rgba(255, 255, 255, 0.22) !important;
+      border-color: rgba(255, 255, 255, 0.28) !important;
     }
     &:hover {
-      background-color: rgba(255, 255, 255, 0.09);
+      background-color: rgba(23, 15, 56, 0.36);
       fieldset {
-        border-color: rgba(255, 255, 255, 0.4) !important;
+        border-color: rgba(255, 255, 255, 0.45) !important;
       }
     }
     &.Mui-focused {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(23, 15, 56, 0.42);
+      // A focus RING instead of just a border — clearer, and accessible.
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
       fieldset {
         border-color: #fff !important;
         border-width: 1.5px;
@@ -90,7 +108,7 @@
   }
 
   .MuiInputLabel-root {
-    color: $white-60 !important;
+    color: rgba(255, 255, 255, 0.72) !important; // was too faint to read
     &.Mui-focused {
       color: #fff !important;
     }
@@ -122,22 +140,33 @@
 
 // The main submit button of every auth form — white pill on the gradient.
 .auth-submit.MuiButton-root {
-  margin-top: 8px;
-  padding-block: 10px;
-  border-radius: 8px;
+  margin-top: 4px;
+  padding-block: 12px; // taller = more confident, easier tap target
+  border-radius: 10px;
   font-weight: 600;
   font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: $brand-indigo-dark;
   background-color: #fff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(23, 15, 56, 0.28);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    background-color: #fff;
+    transform: translateY(-1px); // subtle lift — feels responsive, not flashy
+    box-shadow: 0 12px 26px rgba(23, 15, 56, 0.36);
+  }
+  &:active {
+    transform: translateY(0);
   }
   &.Mui-disabled {
-    background-color: rgba(255, 255, 255, 0.55);
-    color: rgba(67, 56, 202, 0.6);
+    background-color: rgba(255, 255, 255, 0.6);
+    color: rgba(67, 56, 202, 0.55);
+    box-shadow: none;
   }
 }
 
@@ -147,20 +176,27 @@
   font-weight: 600;
 }
 
-// Footer line under each form + the "Forgot password?" row
+// Footer line under each form — separated by a hairline rule so the button
+// isn't crowded by it (this was the cramped bit).
 .auth-form__footer {
-  color: $white-70;
+  color: rgba(255, 255, 255, 0.75);
   text-align: center;
-  margin-top: 24px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .auth-form__forgot-row {
   text-align: right;
-  margin-top: 4px;
-  margin-bottom: 8px;
+  margin-top: 2px;
+  margin-bottom: 20px; // breathing room before the submit button
 
   .MuiLink-root {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.82);
     font-size: 0.85rem;
+
+    &:hover {
+      color: #fff;
+    }
   }
 }
