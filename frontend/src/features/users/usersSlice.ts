@@ -6,7 +6,7 @@
  * ============================================
  */
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchUsers, fetchMe, changeMyPassword, resetUserPassword, deleteUser } from './usersThunks';
+import { fetchUsers, fetchMe, resetUserPassword, deleteUser } from './usersThunks';
 import type { UsersState } from './usersTypes';
 
 const initialState: UsersState = {
@@ -46,20 +46,6 @@ const usersSlice = createSlice({
       // ---- READ me ----
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.me = action.payload;
-      })
-      // ---- change my own password ----
-      .addCase(changeMyPassword.pending, (state) => {
-        state.mutating = true;
-        state.error = null;
-        state.successMessage = null;
-      })
-      .addCase(changeMyPassword.fulfilled, (state, action) => {
-        state.mutating = false;
-        state.successMessage = action.payload.message;
-      })
-      .addCase(changeMyPassword.rejected, (state, action) => {
-        state.mutating = false;
-        state.error = action.payload ?? 'Could not change password';
       })
       // ---- admin resets someone's password ----
       .addCase(resetUserPassword.pending, (state) => {

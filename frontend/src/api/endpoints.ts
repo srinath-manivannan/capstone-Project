@@ -22,7 +22,6 @@ export const ENDPOINTS = {
   USERS: {
     ROOT: '/users', //                                  GET list (admin only)
     ME: '/users/me', //                                 GET my profile
-    MY_PASSWORD: '/users/me/password', //               PATCH my own password
     PASSWORD_BY_ID: (id: string) => `/users/${id}/password`, // PATCH admin reset
     BY_ID: (id: string) => `/users/${id}`, //           DELETE (admin only)
   },

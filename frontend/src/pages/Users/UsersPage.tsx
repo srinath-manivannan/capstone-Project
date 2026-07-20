@@ -1,11 +1,10 @@
 /**
  * ============================================
- * 📄 WHAT : The Users page — self-service password change for everyone,
- *           plus a full user table (delete / reset password) for admins.
+ * 📄 WHAT : The Users page — the admin table of registered accounts.
  * 🎯 WHY  : Same page shape as ItemsPage: fetch on mount, read via selectors,
- *           children dispatch their own thunks. The admin table is rendered
- *           only for admins — but the BACKEND is what actually enforces that
- *           (hiding a button is UX, not security).
+ *           children dispatch their own thunks. The table renders only for
+ *           admins — but the BACKEND is what actually enforces that
+ *           (hiding UI is UX, not security: requireAdmin returns 403).
  * 🔁 FLOW : mount ➜ dispatch(fetchMe) ➜ if admin ➜ dispatch(fetchUsers)
  *           ➜ usersSlice ➜ selectors re-render
  * ============================================
@@ -23,7 +22,6 @@ import {
   selectUsersSuccess,
 } from '../../features/users/usersSelectors';
 import PageHeader from '../../components/PageHeader';
-import ChangePasswordForm from './components/ChangePasswordForm';
 import UserList from './components/UserList';
 import './UsersPage.scss';
 
@@ -35,7 +33,7 @@ export default function UsersPage() {
   const error = useAppSelector(selectUsersError);
   const success = useAppSelector(selectUsersSuccess);
 
-  // 1) Always load my own profile (tells us the role).
+  // 1) Always load my own profile (it tells us the role).
   useEffect(() => {
     dispatch(fetchMe());
     return () => {
@@ -43,7 +41,7 @@ export default function UsersPage() {
     };
   }, [dispatch]);
 
-  // 2) Only admins can list everyone — fetch after we know the role.
+  // 2) Only admins may list everyone — fetch once we know the role.
   useEffect(() => {
     if (isAdmin) dispatch(fetchUsers());
   }, [isAdmin, dispatch]);
@@ -52,28 +50,24 @@ export default function UsersPage() {
     <div className="users-page">
       <PageHeader
         title="Users"
-        subtitle={
-          isAdmin
-            ? 'Manage registered accounts — reset passwords or remove users.'
-            : 'Your account settings.'
-        }
+        subtitle="Registered accounts — reset a password or remove a user."
       />
 
       {error && <Alert severity="error">{error}</Alert>}
       {success && <Alert severity="success">{success}</Alert>}
 
-      {/* Everyone: change my own password */}
-      <ChangePasswordForm />
-
-      {/* Admins only: the full account table */}
-      {isAdmin &&
-        (loading ? (
-          <div className="users-page__spinner">
-            <CircularProgress />
-          </div>
-        ) : (
-          <UserList currentUserId={me?.id} />
-        ))}
+      {!isAdmin ? (
+        // Non-admins get an honest message instead of an empty page.
+        <Alert severity="info">
+          You need an admin account to manage users.
+        </Alert>
+      ) : loading ? (
+        <div className="users-page__spinner">
+          <CircularProgress />
+        </div>
+      ) : (
+        <UserList currentUserId={me?.id} />
+      )}
     </div>
   );
 }

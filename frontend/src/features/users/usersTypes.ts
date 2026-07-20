@@ -19,13 +19,6 @@ export interface AppUser {
   createdAt: string;
 }
 
-/** Body of PATCH /users/me/password — changing MY OWN password. */
-export interface ChangePasswordPayload {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}
-
 /** Body of PATCH /users/:id/password — ADMIN resetting someone's password. */
 export interface ResetPasswordPayload {
   id: string;
