@@ -1,66 +1,114 @@
 // ============================================
-// 📄 WHAT : Styles for BrandPanel — the left "story" side of the auth screen.
+// 📄 WHAT : Styles for BrandPanel — the deep brand side of the auth screen.
+// 🎯 WHY  : One hue with DEPTH (indigo-950 → indigo-700), not a saturated
+//           rainbow. A faint grid texture + one soft glow give it dimension
+//           without shouting. Hidden below 900px so mobile gets just the form.
 // ============================================
 @use '../../../styles/variables' as *;
 
 .brand-panel {
-  display: none; // hidden on mobile — the glass card takes the full width
+  display: none; // mobile: the form takes the full screen
 
   @media (min-width: 900px) {
     position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between; // logo top · story middle · footnote bottom
     flex: 1;
     color: #fff;
-    padding: 48px 64px;
+    padding: 48px 56px;
+    background: $auth-panel-gradient;
+    overflow: hidden;
+
+    // Faint grid — texture you feel more than see. Keeps a large flat panel
+    // from looking empty, without competing with the text.
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(120% 80% at 30% 20%, #000 30%, transparent 75%);
+      pointer-events: none;
+    }
+
+    // A single soft glow for depth.
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -22%;
+      left: -12%;
+      width: 620px;
+      height: 620px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.35), transparent 68%);
+      pointer-events: none;
+    }
   }
 
-  @media (min-width: 1200px) {
-    padding: 48px 96px;
+  @media (min-width: 1280px) {
+    padding: 56px 72px;
+  }
+
+  // keep all content above the texture layers
+  > * {
+    position: relative;
+    z-index: 1;
   }
 
   &__logo-row {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 48px;
   }
 
   &__logo {
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border: 1px solid $glass-border;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
   }
 
   &__headline {
-    font-weight: 800;
-    margin-bottom: 20px;
-    max-width: 520px;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-weight: 700;
+    font-size: clamp(2rem, 3vw, 2.75rem); // scales with the viewport
+    margin-bottom: 18px;
+    max-width: 15ch;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
   }
 
   &__tagline {
-    max-width: 440px;
-    margin-bottom: 40px;
-    opacity: 0.85;
-    line-height: 1.7;
+    max-width: 44ch;
+    margin-bottom: 36px;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
   }
 
   &__feature {
     display: flex;
     align-items: center;
-    gap: 10px;
-    opacity: 0.9;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.925rem;
 
     + .brand-panel__feature {
       margin-top: 14px;
     }
+
+    svg {
+      color: rgba(255, 255, 255, 0.55); // ticks recede; the words lead
+      flex-shrink: 0;
+    }
+  }
+
+  &__footnote {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.8rem;
   }
 }

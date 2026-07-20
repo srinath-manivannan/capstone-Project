@@ -36,10 +36,7 @@ export default function AuthPage() {
 
   return (
     <Box className="auth-page">
-      <span className="auth-page__glow auth-page__glow--top" aria-hidden />
-      <span className="auth-page__glow auth-page__glow--bottom" aria-hidden />
-
-      {/* Left: brand story — hidden on small screens (see BrandPanel.scss) */}
+      {/* Left: deep brand panel — hidden below 900px (see BrandPanel.scss) */}
       <BrandPanel />
 
       {/* Right: the glass form card */}

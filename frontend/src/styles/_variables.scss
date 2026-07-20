@@ -8,14 +8,26 @@
 $brand-indigo: #4f46e5;
 $brand-indigo-dark: #4338ca;
 $brand-purple: #7c3aed;
-$brand-pink: #db2777;
 
-// The auth screen gradient
-$auth-gradient: linear-gradient(135deg, $brand-indigo 0%, $brand-purple 55%, $brand-pink 100%);
+// ---- Auth screen palette ----
+// A DEEP, restrained brand panel — not a saturated rainbow. Professional
+// products use one hue with depth, and save saturation for a single accent.
+$auth-panel-from: #1e1b4b; // indigo-950
+$auth-panel-mid: #2e2a6e;
+$auth-panel-to: #4338ca; //  indigo-700
+$auth-panel-gradient: linear-gradient(155deg, $auth-panel-from 0%, $auth-panel-mid 55%, $auth-panel-to 100%);
 
-// Glass surfaces (auth card)
-$glass-bg: rgba(255, 255, 255, 0.1);
-$glass-border: rgba(255, 255, 255, 0.25);
+// The form side: a clean, near-white surface. High contrast = trustworthy.
+$auth-form-bg: #f8fafc;
+$surface: #ffffff;
+
+// Neutral ink + lines (slate scale)
+$ink: #0f172a;
+$ink-muted: #64748b;
+$line: #e2e8f0;
+$line-strong: #cbd5e1;
+
+// White alphas, still used by the brand panel
 $white-70: rgba(255, 255, 255, 0.7);
 $white-60: rgba(255, 255, 255, 0.6);
 

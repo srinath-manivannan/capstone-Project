@@ -28,7 +28,7 @@ async function main() {
   const user = await User.findOneAndUpdate(
     { email: email.toLowerCase() },
     { role: 'admin' },
-    { new: true }
+    { returnDocument: 'after' } // Mongoose 9: replaces the deprecated `new: true`
   );
 
   if (!user) {
